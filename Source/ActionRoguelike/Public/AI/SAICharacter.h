@@ -7,6 +7,7 @@
 #include "SAICharacter.generated.h"
 
 
+class USActionComponent;
 class UPawnSensingComponent;
 class USAttributeComponent;
 class UUserWidget;
@@ -35,7 +36,10 @@ protected:
 	UPawnSensingComponent* PawnSensingComp;
 
 	UPROPERTY(VisibleAnywhere, Category = "Components")
-	USAttributeComponent* AttributeComponent; 
+	USAttributeComponent* AttributeComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Components")
+	USActionComponent* ActionComponent;
 
 	void SetTargetActor(AActor* NewTarget);
 	// Called when the game starts or when spawned

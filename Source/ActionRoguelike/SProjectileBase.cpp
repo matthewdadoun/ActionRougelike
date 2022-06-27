@@ -2,7 +2,8 @@
 
 
 #include "SProjectileBase.h"
-#include "SAttributeComponent.h"
+
+#include "SActionComponent.h"
 #include "SGameplayFunctionLibrary.h"
 #include "Components/AudioComponent.h"
 
@@ -13,27 +14,23 @@
 
 void ASProjectileBase::OnActorOverlap(UPrimitiveComponent* PrimitiveComponent, AActor* OtherActor, UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult)
 {
-	//if (OtherActor && OtherActor != GetInstigator())
-	//{
-	//	if (USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(OtherActor->GetComponentByClass(USAttributeComponent::StaticClass())))
-	//	{
-	//		AttributeComp->ApplyHealthChange(GetInstigator(), -DamageAmount);
-	//		Explode();
-	//	}
-	//}
-
-	if (USGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, DamageAmount, HitResult))
+	if (OtherActor && OtherActor != GetInstigator())
 	{
-		Explode();
+		//static FGameplayTag Tag = FGameplayTag::RequestGameplayTag("Status.Parrying");
+		if (USActionComponent* ActionComp = Cast<USActionComponent>(OtherActor->GetComponentByClass(USActionComponent::StaticClass())))
+		{
+			if (ActionComp->ActiveGameplayTags.HasTag(ParryTag))
+			{
+				MovementComp->Velocity = -MovementComp->Velocity;
+				SetInstigator(Cast<APawn>(OtherActor));
+				return;
+			}
+		}
+		if (USGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, DamageAmount, HitResult))
+		{
+			Explode();
+		}
 	}
-}
-
-void ASProjectileBase::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse,
-                                 const FHitResult& Hit)
-{
-	//Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
-
-	//Explode();
 }
 
 // Sets default values

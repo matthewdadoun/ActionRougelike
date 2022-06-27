@@ -9,6 +9,7 @@
 #include "GameFramework/Character.h"
 #include "SCharacter.generated.h"
 
+class USActionComponent;
 class UCameraComponent;
 class USpringArmComponent;
 class USInteractionComponent;
@@ -21,23 +22,9 @@ class ACTIONROGUELIKE_API ASCharacter : public ACharacter
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	TSubclassOf<ASMagicProjectile> MagicProjectileClass;
-
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	TSubclassOf<AActor> BlackHoleProjectileClass;
-
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	TSubclassOf<ASDashProjectile> DashProjectileClass;
-
-	UPROPERTY(EditAnywhere, Category = "Attack")
-	UAnimMontage* AttackAnim;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Attack")
 	FName TimeToHitParamName;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Attack")
-	float AttackAnimDelay;
 
 	FTimerHandle TimerHandle_PrimaryAttack;
 
@@ -55,17 +42,14 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* CameraComp;
 
-	UPROPERTY(VisibleAnywhere, Category = "Effects")
-	FName HandSocketName;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Effects")
-	UParticleSystem* CastEffect;
-
 	UPROPERTY(VisibleAnywhere)
 	USInteractionComponent* InteractionComp;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category= "Components")
 	USAttributeComponent* AttributeComp;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category= "Components")
+	USActionComponent* ActionComp; 
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -73,14 +57,14 @@ protected:
 	void MoveForward(float Value);
 	void MoveRight(float Value);
 
+	void SprintStart();
+	void SprintStop();
+
 	void PrimaryAttack();
-	void PrimaryAttack_TimeElapsed();
 
 	void BlackHoleAttack();
-	void BlackHoleAttack_TimeElapsed();
 
 	void Dash();
-	void Dash_TimeElapsed();
 
 	void PrimaryInteract();
 
@@ -90,8 +74,6 @@ protected:
 	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
 
 	virtual void PostInitializeComponents() override;
-
-	virtual FVector GetPawnViewLocation() const override;
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -101,4 +83,6 @@ public:
 
 	UFUNCTION(Exec)
 	void HealSelf(float Amount = 100);
+	
+	virtual FVector GetPawnViewLocation() const override;
 };
