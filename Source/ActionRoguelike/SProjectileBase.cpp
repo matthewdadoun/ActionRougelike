@@ -25,10 +25,12 @@ void ASProjectileBase::OnActorOverlap(UPrimitiveComponent* PrimitiveComponent, A
 				SetInstigator(Cast<APawn>(OtherActor));
 				return;
 			}
-		}
-		if (USGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, DamageAmount, HitResult))
-		{
-			Explode();
+
+			if (USGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, DamageAmount, HitResult))
+			{
+				ActionComp->AddAction(GetInstigator(), BurningClass); 
+				Explode();
+			}
 		}
 	}
 }

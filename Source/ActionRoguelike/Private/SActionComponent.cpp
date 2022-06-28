@@ -15,9 +15,9 @@ void USActionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	for(TSubclassOf<USAction> ActionClass : DefaultActions)
+	for (TSubclassOf<USAction> ActionClass : DefaultActions)
 	{
-		AddAction(ActionClass); 
+		AddAction(GetOwner(), ActionClass);
 	}
 }
 
@@ -31,7 +31,7 @@ void USActionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAct
 	GEngine->AddOnScreenDebugMessage(-1, 0.0f, FColor::White, DebugMessage);
 }
 
-void USActionComponent::AddAction(TSubclassOf<USAction> ActionClass)
+void USActionComponent::AddAction(AActor* Instigator, TSubclassOf<USAction> ActionClass)
 {
 	if (!ensure(ActionClass))
 	{
@@ -42,7 +42,13 @@ void USActionComponent::AddAction(TSubclassOf<USAction> ActionClass)
 	{
 		if (ensure(NewAction))
 		{
+			NewAction->Initialize(this);
 			Actions.Add(NewAction);
+
+			if (NewAction->bAutoStart && ensure(NewAction->CanStart(Instigator)))
+			{
+				NewAction->StartAction(Instigator);
+			}
 		}
 	}
 }
@@ -53,11 +59,11 @@ bool USActionComponent::StartActionByName(AActor* Instigator, FName ActionName)
 	{
 		if (Action && Action->ActionName == ActionName)
 		{
-			if(!Action->CanStart(Instigator))
+			if (!Action->CanStart(Instigator))
 			{
 				FString FailedMsg = FString::Printf(TEXT("Failed to run: %s"), *ActionName.ToString());
 				GEngine->AddOnScreenDebugMessage(-1, 2.0f, FColor::Red, FailedMsg);
-				continue; 
+				continue;
 			}
 			Action->StartAction(Instigator);
 			return true;
@@ -69,12 +75,11 @@ bool USActionComponent::StartActionByName(AActor* Instigator, FName ActionName)
 
 bool USActionComponent::StopActionByName(AActor* Instigator, FName ActionName)
 {
-
 	for (USAction* Action : Actions)
 	{
 		if (Action && Action->ActionName == ActionName)
 		{
-			if(Action->IsRunning())
+			if (Action->IsRunning())
 			{
 				Action->StopAction(Instigator);
 				return true;
@@ -83,4 +88,14 @@ bool USActionComponent::StopActionByName(AActor* Instigator, FName ActionName)
 	}
 
 	return false;
+}
+
+void USActionComponent::RemoveAction(USAction* Action)
+{
+	if (!ensure(Action && !Action->IsRunning()))
+	{
+		return;
+	}
+
+	Actions.Remove(Action);
 }

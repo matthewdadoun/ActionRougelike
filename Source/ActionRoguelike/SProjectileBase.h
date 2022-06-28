@@ -11,6 +11,7 @@ class UAudioComponent;
 class USoundCue;
 class USphereComponent;
 class UProjectileMovementComponent;
+class USActionEffect; 
 UCLASS(Blueprintable)
 class ACTIONROGUELIKE_API ASProjectileBase : public AActor
 {
@@ -48,7 +49,10 @@ protected:
 	FGameplayTag ParryTag;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
-	float DamageAmount; 
+	float DamageAmount;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	TSubclassOf<USActionEffect> BurningClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Effects|Shake")
 	UParticleSystem* ImpactVFX;

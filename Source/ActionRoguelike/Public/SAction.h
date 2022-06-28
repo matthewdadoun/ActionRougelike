@@ -4,12 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
-#include "SActionComponent.h"
 #include "SAction.generated.h"
 
 /**
  * 
  */
+
+class USActionComponent; 
 class UWorld;
 UCLASS(Blueprintable)
 class ACTIONROGUELIKE_API USAction : public UObject
@@ -23,13 +24,19 @@ protected:
 	/* Tags added to owning actor when activated, removed when action stops */
 	UPROPERTY(EditDefaultsOnly, Category = "Tags")
 	FGameplayTagContainer GrantsTags;
-
 	/* Action can only start if the owning actor has none of these tags applied */
 	UPROPERTY(EditDefaultsOnly, Category = "Tags")
 	FGameplayTagContainer BlockedTags;
 
 	bool bIsRunning;
+
+	UPROPERTY()
+	USActionComponent* ActionComponent;
 public:
+	/* Start immediately when added to an action component */
+	UPROPERTY(EditDefaultsOnly, Category = "Action")
+	bool bAutoStart;
+
 	UFUNCTION(BlueprintCallable, Category = "Action")
 	FORCEINLINE bool IsRunning() const { return bIsRunning; }
 
@@ -41,6 +48,8 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Action")
 	void StopAction(AActor* Instigator);
+	
+	void Initialize(USActionComponent* NewActionComponent);
 
 	/* Action nickname to start/stop without a reference to the actual object */
 	UPROPERTY(EditDefaultsOnly, Category = "Action")

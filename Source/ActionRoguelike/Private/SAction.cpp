@@ -3,6 +3,8 @@
 
 #include "SAction.h"
 
+#include "SActionComponent.h"
+
 void USAction::StartAction_Implementation(AActor* Instigator)
 {
 	UE_LOG(LogTemp, Log, TEXT("Running: %s"), *GetNameSafe(this));
@@ -36,13 +38,18 @@ bool USAction::CanStart_Implementation(AActor* Instigator)
 	{
 		return false;
 	}
-
+	
 	USActionComponent* OwningComp = GetOwningComponent();
 	if (OwningComp->ActiveGameplayTags.HasAny(BlockedTags))
 	{
 		return false;
 	}
 	return true;
+}
+
+void USAction::Initialize(USActionComponent* NewActionComponent)
+{
+	ActionComponent = NewActionComponent; 
 }
 
 UWorld* USAction::GetWorld() const

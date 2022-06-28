@@ -6,26 +6,49 @@
 #include "Components/ActorComponent.h"
 #include "SInteractionComponent.generated.h"
 
-
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
+class USWorldUserWidget;
+UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class ACTIONROGUELIKE_API USInteractionComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:
 	void PrimaryInteract();
-	
-public:	
+
+public:
 	// Sets default values for this component's properties
 	USInteractionComponent();
+	
 
 protected:
+
+	// reliable: will always arrive eventually, request will be resent until acknowledgement was received
+	// unreliable: not guaranteed, packet can get lost and won't retry
+	UFUNCTION(Server, Reliable)
+	void ServerInteract(); 
+	void FindBestInteractable();
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
-public:	
+	UPROPERTY()
+	AActor* FocusedActor;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Trace")
+	TEnumAsByte<ECollisionChannel> CollisionChannel;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Trace")
+	float TraceDistance;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Trace")
+	float TraceRadius;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<USWorldUserWidget> DefaultWidgetClass;
+
+	UPROPERTY()
+	USWorldUserWidget* DefaultWidgetInstance;
+
+public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
-
-		
 };
