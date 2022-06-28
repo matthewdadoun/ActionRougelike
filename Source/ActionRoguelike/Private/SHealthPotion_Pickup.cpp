@@ -3,6 +3,7 @@
 
 #include "SHealthPotion_Pickup.h"
 
+#include "SPlayerState.h"
 #include "ActionRoguelike/SAttributeComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -14,23 +15,24 @@ void ASHealthPotion_Pickup::RefillHealth(class UPrimitiveComponent* OverlappedCo
 		return;
 	}
 
-	if ((OtherActor == UGameplayStatics::GetPlayerPawn(this, 0)))
+	if (APawn* Pawn = Cast<APawn>(OtherActor))
 	{
-		USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(OtherActor->GetComponentByClass(USAttributeComponent::StaticClass()));
-
-		if (!AttributeComp->IsFullHealth())
+		if (ASPlayerState* PS = Cast<ASPlayerState>(Pawn->GetPlayerState()))
 		{
-			if (AttributeComp->ApplyHealthChange(this, AttributeComp->GetHealthMax()))
+			USAttributeComponent* AttributeComp = Cast<USAttributeComponent>(Pawn->GetComponentByClass(USAttributeComponent::StaticClass()));
+
+			if (!AttributeComp->IsFullHealth())
 			{
-				HidePickup();
+				if (PS->RemoveCredits(1))
+				{
+					if (AttributeComp->ApplyHealthChange(this, AttributeComp->GetHealthMax()))
+					{
+						HidePickup();
+					}
+				}
 			}
 		}
 	}
-}
-
-void ASHealthPotion_Pickup::BeginPlay()
-{
-	Super::BeginPlay();
 }
 
 ASHealthPotion_Pickup::ASHealthPotion_Pickup()
@@ -39,8 +41,4 @@ ASHealthPotion_Pickup::ASHealthPotion_Pickup()
 	PotionBottleMeshComp->SetupAttachment(RootComponent);
 
 	PotionBottleMeshComp->OnComponentBeginOverlap.AddUniqueDynamic(this, &ThisClass::RefillHealth);
-}
-
-void ASHealthPotion_Pickup::Interact_Implementation(APawn* InstigatorPawn)
-{
 }

@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SPickupActor.h"
 #include "EnvironmentQuery/EnvQueryTypes.h"
 #include "GameFramework/GameModeBase.h"
 #include "SGameModeBase.generated.h"
@@ -37,6 +38,12 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	TSubclassOf<AActor> MinionClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Pickups")
+	TArray<TSubclassOf<ASPickupActor>> PickupClasses;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Pickups")
+	UEnvQuery* PickupSpawnQuery;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	UEnvQuery* SpawnBotQuery;
@@ -44,8 +51,20 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	UCurveFloat* DifficultyCurve;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Pickups")
+	int32 DesiredPickupCount;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Pickups")
+	float RequiredPickupDistance;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Credits")
+	int32 CreditKillAmount;
+
 	UFUNCTION()
-	void OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
+	void OnBotSpawnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
+
+	UFUNCTION()
+	void OnPickupSpawnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
 
 	UFUNCTION()
 	void RespawnPlayerElapsed(AController* Controller); 

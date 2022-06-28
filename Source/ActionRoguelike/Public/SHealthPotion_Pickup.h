@@ -17,12 +17,9 @@ class ACTIONROGUELIKE_API ASHealthPotion_Pickup : public ASPickupActor
 public:
 	UFUNCTION()
 	void RefillHealth(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-	virtual void BeginPlay() override;
 
 	ASHealthPotion_Pickup();
 protected:
-	virtual void Interact_Implementation(APawn* InstigatorPawn) override;
-
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Pickup")
 	UStaticMeshComponent* PotionBottleMeshComp; 

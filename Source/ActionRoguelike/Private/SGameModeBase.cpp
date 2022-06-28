@@ -4,6 +4,7 @@
 #include "SGameModeBase.h"
 
 #include "EngineUtils.h"
+#include "SPlayerState.h"
 #include "ActionRoguelike/SAttributeComponent.h"
 #include "ActionRoguelike/SCharacter.h"
 #include "AI/SAICharacter.h"
@@ -18,15 +19,14 @@ ASGameModeBase::ASGameModeBase()
 }
 
 
-
 void ASGameModeBase::SpawnBotTimerElapsed()
 {
-	if(!CVarSpawnBots.GetValueOnGameThread())
+	if (!CVarSpawnBots.GetValueOnGameThread())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Bot Spawning disabled via cvar 'CVarSpawnBots'."))
-		return; 
+		return;
 	}
-	
+
 	UEnvQueryInstanceBlueprintWrapper* QueryInstance = UEnvQueryManager::RunEQSQuery(this, SpawnBotQuery,
 	                                                                                 this, EEnvQueryRunMode::RandomBest5Pct, nullptr);
 
@@ -34,7 +34,7 @@ void ASGameModeBase::SpawnBotTimerElapsed()
 	for (TActorIterator<ASAICharacter> It(GetWorld()); It; ++It)
 	{
 		ASAICharacter* Bot = *It;
-		USAttributeComponent* AttributeComponent = USAttributeComponent::GetAttributes(Bot); 
+		USAttributeComponent* AttributeComponent = USAttributeComponent::GetAttributes(Bot);
 		{
 			if (AttributeComponent && AttributeComponent->IsAlive())
 			{
@@ -43,14 +43,14 @@ void ASGameModeBase::SpawnBotTimerElapsed()
 		}
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("Found %i alive bots"), NrOfAliveBots); 
+	UE_LOG(LogTemp, Log, TEXT("Found %i alive bots"), NrOfAliveBots);
 	float MaxBotCount = 10.0f;
-	
+
 	if (DifficultyCurve)
 	{
 		MaxBotCount = DifficultyCurve->GetFloatValue(GetWorld()->TimeSeconds);
 	}
-	
+
 	if (NrOfAliveBots >= MaxBotCount)
 	{
 		UE_LOG(LogTemp, Log, TEXT("At maximum bot capacity. Skipping bot spawn"));
@@ -59,11 +59,11 @@ void ASGameModeBase::SpawnBotTimerElapsed()
 
 	if (ensure(QueryInstance))
 	{
-		QueryInstance->GetOnQueryFinishedEvent().AddUniqueDynamic(this, &ThisClass::OnQueryCompleted);
+		QueryInstance->GetOnQueryFinishedEvent().AddUniqueDynamic(this, &ThisClass::OnBotSpawnQueryCompleted);
 	}
 }
 
-void ASGameModeBase::OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus)
+void ASGameModeBase::OnBotSpawnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus)
 {
 	if (QueryStatus != EEnvQueryStatus::Success)
 	{
@@ -78,11 +78,60 @@ void ASGameModeBase::OnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryIn
 	}
 }
 
+void ASGameModeBase::OnPickupSpawnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus)
+{
+	if (QueryStatus != EEnvQueryStatus::Success)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Pick up EQS Query failed"))
+	}
+
+	TArray<FVector> Locations = QueryInstance->GetResultsAsLocations();
+	TArray<FVector> UsedLocations;
+
+	int32 SpawnCounter = 0;
+
+	while (SpawnCounter < DesiredPickupCount && Locations.Num() > 0)
+	{
+		//pick random location from remaining points in the array
+		int32 RandomLocationIndex = FMath::RandRange(0, Locations.Num() - 1);
+		FVector PickedRandomLocation = Locations[RandomLocationIndex];
+
+		//remove location at random index
+		Locations.RemoveAt(RandomLocationIndex);
+
+		//check minimum distance
+		bool bValidLocation = true;
+		for (FVector OtherLocation : UsedLocations)
+		{
+			float DistanceTo = (PickedRandomLocation - OtherLocation).Size();
+			if (DistanceTo < RequiredPickupDistance)
+			{
+				//too close, pick another location 
+				bValidLocation = false;
+				break;
+			}
+		}
+
+		if (!bValidLocation)
+		{
+			continue;
+		}
+
+		int32 RandomPickupClassIndex = FMath::RandRange(0, PickupClasses.Num() - 1);
+		TSubclassOf<ASPickupActor> RandomPickupClass = PickupClasses[RandomPickupClassIndex];
+
+		GetWorld()->SpawnActor<ASPickupActor>(RandomPickupClass, PickedRandomLocation, FRotator::ZeroRotator);
+
+		UsedLocations.Add(PickedRandomLocation);
+		SpawnCounter++;
+	}
+}
+
 void ASGameModeBase::RespawnPlayerElapsed(AController* Controller)
 {
-	if(ensure(Controller))
+	if (ensure(Controller))
 	{
-		Controller->UnPossess(); 
+		Controller->UnPossess();
 		RestartPlayer(Controller);
 	}
 }
@@ -94,6 +143,16 @@ void ASGameModeBase::StartPlay()
 	//Continuous timer to spawn in more bots.
 	// Actual amount of bots and whether its allowed to spawn determined by spawn logic later in the chain
 	GetWorldTimerManager().SetTimer(TimerHandle_SpawnBots, this, &ThisClass::SpawnBotTimerElapsed, SpawnTimerInterval, true);
+
+	if (ensure(PickupClasses.Num() > 0))
+	{
+		UEnvQueryInstanceBlueprintWrapper* QueryInstance = UEnvQueryManager::RunEQSQuery(this, PickupSpawnQuery, this,
+		                                                                                 EEnvQueryRunMode::AllMatching, nullptr);
+		if (ensure(QueryInstance))
+		{
+			QueryInstance->GetOnQueryFinishedEvent().AddUniqueDynamic(this, &ThisClass::OnPickupSpawnQueryCompleted);
+		}
+	}
 }
 
 void ASGameModeBase::KillAll()
@@ -101,7 +160,7 @@ void ASGameModeBase::KillAll()
 	for (TActorIterator<ASAICharacter> It(GetWorld()); It; ++It)
 	{
 		ASAICharacter* Bot = *It;
-		USAttributeComponent* AttributeComponent = USAttributeComponent::GetAttributes(Bot); 
+		USAttributeComponent* AttributeComponent = USAttributeComponent::GetAttributes(Bot);
 		{
 			if (AttributeComponent && AttributeComponent->IsAlive())
 			{
@@ -113,16 +172,22 @@ void ASGameModeBase::KillAll()
 
 void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 {
-	if(ASCharacter* Player = Cast<ASCharacter>(VictimActor))
+	if (ASCharacter* Player = Cast<ASCharacter>(VictimActor))
 	{
 		FTimerHandle TimerHandle_RespawnDelay;
 
 		FTimerDelegate Delegate;
 		Delegate.BindUFunction(this, "RespawnPlayerElapsed", Player->GetController());
-
 		float RespawnDelay = 2.0f;
-		GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate, RespawnDelay, false); 
-	}
+		GetWorldTimerManager().SetTimer(TimerHandle_RespawnDelay, Delegate, RespawnDelay, false);
 
-	UE_LOG(LogTemp, Log, TEXT("OnActorKilled: Victim: %s, Killer: %s"), *GetNameSafe(VictimActor), *GetNameSafe(Killer));
+		UE_LOG(LogTemp, Log, TEXT("OnActorKilled: Victim: %s, Killer: %s"), *GetNameSafe(VictimActor), *GetNameSafe(Killer));
+	}
+	if (APawn* KillerPawn = Cast<APawn>(Killer))
+	{
+		if (ASPlayerState* PlayerState = (KillerPawn->GetPlayerState<ASPlayerState>()))
+		{
+			PlayerState->AddCredits(CreditKillAmount);
+		}
+	}
 }

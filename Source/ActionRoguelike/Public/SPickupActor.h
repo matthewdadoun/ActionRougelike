@@ -7,7 +7,6 @@
 #include "GameFramework/Actor.h"
 #include "SPickupActor.generated.h"
 
-class USphereComponent; 
 UCLASS()
 class ACTIONROGUELIKE_API ASPickupActor : public AActor, public ISGameplayInterface
 {
@@ -33,7 +32,7 @@ protected:
 	UFUNCTION(BlueprintCallable)
 	void HidePickup();
 	UFUNCTION()
-	void SetPowerUpState(bool bNewIsActive);
+	void SetPickupState(bool bNewIsActive);
 	
 public:	
 	// Called every frame

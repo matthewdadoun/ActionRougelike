@@ -3,13 +3,12 @@
 
 #include "SPickupActor.h"
 
-#include "Components/SphereComponent.h"
-
 // Sets default values
 ASPickupActor::ASPickupActor()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	RespawnTime = 10; 
 }
 
 void ASPickupActor::Interact_Implementation(APawn* InstigatorPawn)
@@ -19,17 +18,17 @@ void ASPickupActor::Interact_Implementation(APawn* InstigatorPawn)
 
 void ASPickupActor::ShowPickup()
 {
-	SetPowerUpState(true);
+	SetPickupState(true);
 }
 
 void ASPickupActor::HidePickup()
 {
-	SetPowerUpState(false);
+	SetPickupState(false);
 
-	GetWorldTimerManager().SetTimer(ReActivateTimer, this, &ThisClass::ShowPickup, RespawnTime);
+	GetWorldTimerManager().SetTimer(ReActivateTimer, this, &ThisClass::ShowPickup, 10);
 }
 
-void ASPickupActor::SetPowerUpState(bool bNewIsActive)
+void ASPickupActor::SetPickupState(bool bNewIsActive)
 {
 	SetActorEnableCollision(bNewIsActive);
 	RootComponent->SetVisibility(bNewIsActive, true);
