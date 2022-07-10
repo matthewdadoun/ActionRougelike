@@ -8,7 +8,7 @@
 #include "DrawDebugHelpers.h"
 #include "SActionComponent.h"
 #include "SWorldUserWidget.h"
-#include "ActionRoguelike/SAttributeComponent.h"
+#include "SAttributeComponent.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/CapsuleComponent.h"

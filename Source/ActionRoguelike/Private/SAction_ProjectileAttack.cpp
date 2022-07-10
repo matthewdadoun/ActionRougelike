@@ -3,7 +3,7 @@
 
 #include "SAction_ProjectileAttack.h"
 
-#include "ActionRoguelike/SCharacter.h"
+#include "SCharacter.h"
 #include "Kismet/GameplayStatics.h"
 
 USAction_ProjectileAttack::USAction_ProjectileAttack()

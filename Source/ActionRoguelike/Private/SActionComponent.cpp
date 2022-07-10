@@ -4,7 +4,7 @@
 #include "SActionComponent.h"
 
 #include "SAction.h"
-#include "ActionRoguelike/ActionRoguelike.h"
+#include "ActionRoguelike.h"
 #include "Engine/ActorChannel.h"
 #include "Net/UnrealNetwork.h"
 

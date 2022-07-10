@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "ActionRoguelike/SGameplayInterface.h"
+#include "SGameplayInterface.h"
 #include "GameFramework/Actor.h"
 #include "SPickupActor.generated.h"
 

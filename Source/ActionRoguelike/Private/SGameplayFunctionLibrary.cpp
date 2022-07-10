@@ -3,7 +3,7 @@
 
 #include "SGameplayFunctionLibrary.h"
 
-#include "ActionRoguelike/SAttributeComponent.h"
+#include "SAttributeComponent.h"
 
 bool USGameplayFunctionLibrary::ApplyDamage(AActor* DamageCauser, AActor* TargetActor, float DamageAmount)
 {

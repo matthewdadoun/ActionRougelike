@@ -5,7 +5,7 @@
 
 #include "SActionComponent.h"
 #include "SGameplayFunctionLibrary.h"
-#include "ActionRoguelike/SAttributeComponent.h"
+#include "SAttributeComponent.h"
 
 USActionEffect_Thorns::USActionEffect_Thorns()
 {

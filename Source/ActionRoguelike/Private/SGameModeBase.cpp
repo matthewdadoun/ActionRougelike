@@ -5,8 +5,8 @@
 
 #include "EngineUtils.h"
 #include "SPlayerState.h"
-#include "ActionRoguelike/SAttributeComponent.h"
-#include "ActionRoguelike/SCharacter.h"
+#include "SAttributeComponent.h"
+#include "SCharacter.h"
 #include "AI/SAICharacter.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
 

@@ -4,7 +4,7 @@
 #include "SHealthPotion_Pickup.h"
 
 #include "SPlayerState.h"
-#include "ActionRoguelike/SAttributeComponent.h"
+#include "SAttributeComponent.h"
 #include "Kismet/GameplayStatics.h"
 
 void ASHealthPotion_Pickup::RefillHealth(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
