@@ -30,6 +30,4 @@ bool USGameplayFunctionLibrary::ApplyDirectionalDamage(AActor* DamageCauser, AAc
 		return true;
 	}
 	return false;
-
-	return false;
 }

@@ -8,7 +8,7 @@
 #include "SWorldUserWidget.h"
 #include "Blueprint/UserWidget.h"
 
-static TAutoConsoleVariable<bool> CVarDrawInteraction(TEXT("su.InteractionDebugDraw"), true, TEXT("Enables debug shapes for interaction component"), ECVF_Cheat);
+static TAutoConsoleVariable<bool> CVarDrawInteraction(TEXT("su.InteractionDebugDraw"), false, TEXT("Enables debug shapes for interaction component"), ECVF_Cheat);
 
 // Sets default values for this component's properties
 USInteractionComponent::USInteractionComponent()
@@ -19,7 +19,7 @@ USInteractionComponent::USInteractionComponent()
 
 	TraceRadius = 30.0f;
 	TraceDistance = 500.0f;
-	CollisionChannel = ECC_WorldDynamic; 
+	CollisionChannel = ECC_WorldDynamic;
 	// ...
 }
 
@@ -28,8 +28,6 @@ USInteractionComponent::USInteractionComponent()
 void USInteractionComponent::BeginPlay()
 {
 	Super::BeginPlay();
-
-	// ...
 }
 
 
@@ -38,7 +36,13 @@ void USInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType,
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
-	FindBestInteractable(); 
+	if (APawn* Pawn = Cast<APawn>(GetOwner()))
+	{
+		if (Pawn->IsLocallyControlled())
+		{
+			FindBestInteractable();
+		}
+	}
 	// ...
 }
 
@@ -64,7 +68,7 @@ void USInteractionComponent::FindBestInteractable()
 	FColor LineColor = bBlockingHit ? FColor::Green : FColor::Red;
 
 	//clear ref before trying to fill
-	FocusedActor = nullptr; 
+	FocusedActor = nullptr;
 
 	for (FHitResult Hit : Hits)
 	{
@@ -113,12 +117,18 @@ void USInteractionComponent::FindBestInteractable()
 
 void USInteractionComponent::PrimaryInteract()
 {
-	if (!FocusedActor)
+	ServerInteract(FocusedActor);
+}
+
+
+void USInteractionComponent::ServerInteract_Implementation(AActor* InFocus)
+{
+	if (!InFocus)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Red, "No Focused Actor to interact");
 		return;
 	}
 
 	APawn* MyPawn = Cast<APawn>(GetOwner());
-	ISGameplayInterface::Execute_Interact(FocusedActor, MyPawn);
+	ISGameplayInterface::Execute_Interact(InFocus, MyPawn);
 }

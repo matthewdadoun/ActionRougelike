@@ -25,7 +25,8 @@ protected:
 	// reliable: will always arrive eventually, request will be resent until acknowledgement was received
 	// unreliable: not guaranteed, packet can get lost and won't retry
 	UFUNCTION(Server, Reliable)
-	void ServerInteract(); 
+	void ServerInteract(AActor* InFocus);
+	
 	void FindBestInteractable();
 	// Called when the game starts
 	virtual void BeginPlay() override;

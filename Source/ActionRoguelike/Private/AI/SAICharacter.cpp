@@ -23,7 +23,7 @@ ASAICharacter::ASAICharacter()
 	ActionComponent = CreateDefaultSubobject<USActionComponent>("ActionComponent");
 
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Ignore);
-	GetMesh()->SetGenerateOverlapEvents(true); 
+	GetMesh()->SetGenerateOverlapEvents(true);
 	TimeToHitParamName = "TimeToHit";
 }
 
@@ -36,10 +36,39 @@ void ASAICharacter::SetTargetActor(AActor* NewTarget)
 	}
 }
 
+AActor* ASAICharacter::GetTargetActor() const
+{
+	if (AAIController* AIC = Cast<AAIController>(GetController()))
+	{
+		FName TargetActorKey;
+		return Cast<AActor>(AIC->GetBlackboardComponent()->GetValueAsObject("TargetActor"));
+	}
+	return nullptr;
+}
+
 // Called when the game starts or when spawned
 void ASAICharacter::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void ASAICharacter::OnPawnSeen(APawn* Pawn)
+{
+	if (GetTargetActor() != Pawn)
+	{
+		SetTargetActor(Pawn);
+		//DrawDebugString(GetWorld(), GetActorLocation(), TEXT("PLAYER SPOTTED"), nullptr, FColor::White, 4, true);
+
+		if (!ActivePawnSeen)
+		{
+			ActivePawnSeen = CreateWidget<USWorldUserWidget>(GetWorld(), FoundPlayerWidgetClass);
+			if (ActivePawnSeen)
+			{
+				ActivePawnSeen->AttachedActor = this;
+				ActivePawnSeen->AddToViewport(10);
+			}
+		}
+	}
 }
 
 void ASAICharacter::PostInitializeComponents()
@@ -47,12 +76,6 @@ void ASAICharacter::PostInitializeComponents()
 	Super::PostInitializeComponents();
 	PawnSensingComp->OnSeePawn.AddUniqueDynamic(this, &ThisClass::OnPawnSeen);
 	AttributeComponent->OnHealthChanged.AddUniqueDynamic(this, &ThisClass::OnHealthChanged);
-}
-
-void ASAICharacter::OnPawnSeen(APawn* Pawn)
-{
-	SetTargetActor(Pawn);
-	DrawDebugString(GetWorld(), GetActorLocation(), TEXT("PLAYER SPOTTED"), nullptr, FColor::White, 4, true);
 }
 
 // Called every frame
@@ -82,7 +105,7 @@ void ASAICharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponen
 			ActiveHealthBar = CreateWidget<USWorldUserWidget>(GetWorld(), HealthBarWidgetClass);
 			if (ActiveHealthBar)
 			{
-				ActiveHealthBar->AttachedActor = this; 
+				ActiveHealthBar->AttachedActor = this;
 				ActiveHealthBar->AddToViewport();
 			}
 		}
@@ -99,7 +122,7 @@ void ASAICharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponen
 			GetMesh()->SetCollisionProfileName("Ragdoll");
 
 			GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			GetCharacterMovement()->DisableMovement(); 
+			GetCharacterMovement()->DisableMovement();
 
 			//set lifespan
 			SetLifeSpan(10);

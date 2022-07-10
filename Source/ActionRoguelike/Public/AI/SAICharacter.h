@@ -25,9 +25,15 @@ protected:
 
 	UPROPERTY()
 	USWorldUserWidget* ActiveHealthBar;
+
+	UPROPERTY()
+	USWorldUserWidget* ActivePawnSeen;
 	
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UUserWidget> HealthBarWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> FoundPlayerWidgetClass;
 	
 	UPROPERTY(VisibleAnywhere, Category = "Effects")
 	FName TimeToHitParamName;
@@ -42,6 +48,8 @@ protected:
 	USActionComponent* ActionComponent;
 
 	void SetTargetActor(AActor* NewTarget);
+
+	AActor* GetTargetActor() const;
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 

@@ -28,8 +28,11 @@ void ASProjectileBase::OnActorOverlap(UPrimitiveComponent* PrimitiveComponent, A
 
 			if (USGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, DamageAmount, HitResult))
 			{
-				ActionComp->AddAction(GetInstigator(), BurningClass); 
-				Explode();
+				if (ActionComp && HasAuthority())
+				{
+					ActionComp->AddAction(GetInstigator(), BurningClass);
+					Explode();
+				}
 			}
 		}
 	}
@@ -57,6 +60,8 @@ ASProjectileBase::ASProjectileBase()
 	MovementComp->InitialSpeed = 1000.0f;
 	MovementComp->bRotationFollowsVelocity = true;
 	MovementComp->bInitialVelocityInLocalSpace = true;
+
+	SetReplicates(true);
 }
 
 // Called when the game starts or when spawned

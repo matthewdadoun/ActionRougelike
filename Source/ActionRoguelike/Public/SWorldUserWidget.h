@@ -7,26 +7,23 @@
 #include "SWorldUserWidget.generated.h"
 
 
-
 /**
  * 
  */
-class USizeBox; 
+class USizeBox;
 UCLASS()
 class ACTIONROGUELIKE_API USWorldUserWidget : public UUserWidget
 {
 	GENERATED_BODY()
 public:
-	UPROPERTY(BlueprintReadOnly, Category = "UI")
+	UPROPERTY(BlueprintReadOnly, Category = "UI", meta = (ExposeOnSpawn = true))
 	AActor* AttachedActor;
 
 	UPROPERTY(EditAnywhere, Category = "UI")
-	FVector WorldOffset; 
-	
-protected:
+	FVector WorldOffset;
 
+protected:
 	UPROPERTY(meta = (BindWidget))
-	USizeBox* ParentSizeBox; 
+	USizeBox* ParentSizeBox;
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
-	
 };

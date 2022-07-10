@@ -25,8 +25,3 @@ bool ASPlayerState::RemoveCredits(float Delta)
 	}
 	return false; 
 }
-
-int32 ASPlayerState::GetCredits() const
-{
-	return Credits;
-}

@@ -6,9 +6,11 @@
 // Sets default values
 ASPickupActor::ASPickupActor()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	RespawnTime = 10; 
+	RespawnTime = 10;
+
+	SetReplicates(true);
 }
 
 void ASPickupActor::Interact_Implementation(APawn* InstigatorPawn)
@@ -38,6 +40,4 @@ void ASPickupActor::SetPickupState(bool bNewIsActive)
 void ASPickupActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
-

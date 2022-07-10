@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SDashProjectile.h"
 #include "SInteractionComponent.h"
 #include "SMagicProjectile.h"
 #include "GameFramework/Character.h"

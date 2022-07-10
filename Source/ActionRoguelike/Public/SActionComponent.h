@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "SActionEffect.h"
+#include "SAction_Pickup.h"
 #include "Components/ActorComponent.h"
 #include "SActionComponent.generated.h"
 
@@ -27,19 +28,29 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category= "Actions")
 	bool StartActionByName(AActor* Instigator, FName ActionName);
+	
 	UFUNCTION(BlueprintCallable, Category= "Actions")
 	bool StopActionByName(AActor* Instigator, FName ActionName);
 
 	UFUNCTION(BlueprintCallable, Category= "Actions")
 	void RemoveAction(USAction* Action);
-
-
+	
+	USAction* GetAction(TSubclassOf<USAction> Class);
+	
 protected:
+
+	UFUNCTION(Server, Reliable)
+	void ServerStartAction(AActor* Instigator, FName ActionName); 
+
+
+	UFUNCTION(Server, Reliable)
+	void ServerStopAction(AActor* Instigator, FName ActionName);
+	
 	/* Grant abilities at start	**/
 	UPROPERTY(EditAnywhere, Category = "Actions")
 	TArray<TSubclassOf<USAction>> DefaultActions;
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	TArray<USAction*> Actions;
 
 	// Called when the game starts
@@ -48,4 +59,6 @@ protected:
 public:
 	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
+	bool ReplicateSubobjects(UActorChannel* Channel, FOutBunch* Bunch, FReplicationFlags* RepFlags) override;
 };

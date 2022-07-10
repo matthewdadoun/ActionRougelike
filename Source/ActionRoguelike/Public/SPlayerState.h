@@ -29,10 +29,7 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Credits")
 	bool RemoveCredits(float Delta);
-
-	UFUNCTION(BlueprintCallable, Category = "Credits")
-	int32 GetCredits() const;
-
+	
 	UPROPERTY(BlueprintAssignable, Category = "Credits")
 	FOnCreditsChanged OnCreditsChanged;
 };

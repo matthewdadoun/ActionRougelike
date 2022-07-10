@@ -10,7 +10,7 @@ void ASAIController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if(ensureMsgf(BehaviorTree, TEXT("Behavior Tree is nullptr! Please assign BehaviorTree is in your AI controler.")))
+	if(ensureMsgf(BehaviorTree, TEXT("Behavior Tree is nullptr! Please assign the BehaviorTree in your AI controller.")))
 	{
 		RunBehaviorTree(BehaviorTree);
 	}
