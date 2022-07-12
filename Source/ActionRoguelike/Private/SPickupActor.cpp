@@ -3,6 +3,8 @@
 
 #include "SPickupActor.h"
 
+#include "Net/UnrealNetwork.h"
+
 // Sets default values
 ASPickupActor::ASPickupActor()
 {
@@ -11,6 +13,12 @@ ASPickupActor::ASPickupActor()
 	RespawnTime = 10;
 
 	SetReplicates(true);
+}
+
+void ASPickupActor::OnRep_IsActive()
+{
+	SetActorEnableCollision(bIsActive);
+	RootComponent->SetVisibility(bIsActive, true);
 }
 
 void ASPickupActor::Interact_Implementation(APawn* InstigatorPawn)
@@ -32,12 +40,19 @@ void ASPickupActor::HidePickup()
 
 void ASPickupActor::SetPickupState(bool bNewIsActive)
 {
-	SetActorEnableCollision(bNewIsActive);
-	RootComponent->SetVisibility(bNewIsActive, true);
+	bIsActive = bNewIsActive;
+	OnRep_IsActive();
 }
 
 // Called every frame
 void ASPickupActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void ASPickupActor::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ThisClass, bIsActive);
 }

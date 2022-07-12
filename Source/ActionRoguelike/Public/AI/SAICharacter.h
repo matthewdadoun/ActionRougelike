@@ -22,22 +22,21 @@ public:
 	ASAICharacter();
 
 protected:
-
 	UPROPERTY()
 	USWorldUserWidget* ActiveHealthBar;
 
 	UPROPERTY()
 	USWorldUserWidget* ActivePawnSeen;
-	
+
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UUserWidget> HealthBarWidgetClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "UI")
 	TSubclassOf<UUserWidget> FoundPlayerWidgetClass;
-	
+
 	UPROPERTY(VisibleAnywhere, Category = "Effects")
 	FName TimeToHitParamName;
-	
+
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	UPawnSensingComponent* PawnSensingComp;
 
@@ -58,7 +57,7 @@ protected:
 
 	virtual void PostInitializeComponents() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -67,4 +66,7 @@ public:
 
 	UFUNCTION()
 	void OnHealthChanged(AActor* InstigatorActor, USAttributeComponent* OwningComp, float NewHealth, float Delta);
+
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastPawnSeen();
 };

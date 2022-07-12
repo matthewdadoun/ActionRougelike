@@ -21,6 +21,8 @@ public:
 	// Sets default values for this actor's properties
 	ASItemChest();
 
+	virtual void OnActorLoaded_Implementation() override;
+
 protected:
 
 	UPROPERTY(VisibleAnywhere)
@@ -29,7 +31,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* LidMesh;
 
-	UPROPERTY(ReplicatedUsing = "OnRep_LidOpened", BlueprintReadOnly)
+	UPROPERTY(ReplicatedUsing = "OnRep_LidOpened", BlueprintReadOnly, SaveGame)
 	bool bLidOpened;
 
 	UFUNCTION()

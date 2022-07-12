@@ -3,12 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SGameModeBase.h"
+#include "SSaveGame.h"
 #include "GameFramework/PlayerState.h"
 #include "SPlayerState.generated.h"
 
 /**
  * 
  */
+
 
 class APlayerState;
 //Event handler for credits
@@ -20,7 +23,7 @@ class ACTIONROGUELIKE_API ASPlayerState : public APlayerState
 	GENERATED_BODY()
 
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = "Credits")
+	UPROPERTY(EditDefaultsOnly, Category = "Credits", ReplicatedUsing="OnRep_Credits")
 	int32 Credits;
 
 public:
@@ -29,7 +32,19 @@ public:
 
 	UFUNCTION(BlueprintCallable, Category = "Credits")
 	bool RemoveCredits(float Delta);
-	
+
 	UPROPERTY(BlueprintAssignable, Category = "Credits")
 	FOnCreditsChanged OnCreditsChanged;
+
+	UFUNCTION(BlueprintNativeEvent)
+	void SavePlayerState(USSaveGame* SaveGame);
+
+	UFUNCTION(BlueprintNativeEvent)
+	void LoadPlayerState(USSaveGame* SaveGame);
+
+	UFUNCTION(BlueprintCallable)
+	int32 GetCredits();
+
+	UFUNCTION()
+	void OnRep_Credits(int32 OldCredits);
 };

@@ -61,12 +61,7 @@ void ASAICharacter::OnPawnSeen(APawn* Pawn)
 
 		if (!ActivePawnSeen)
 		{
-			ActivePawnSeen = CreateWidget<USWorldUserWidget>(GetWorld(), FoundPlayerWidgetClass);
-			if (ActivePawnSeen)
-			{
-				ActivePawnSeen->AttachedActor = this;
-				ActivePawnSeen->AddToViewport(10);
-			}
+			MulticastPawnSeen();
 		}
 	}
 }
@@ -117,6 +112,7 @@ void ASAICharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponen
 			{
 				AIC->GetBrainComponent()->StopLogic("Died");
 			}
+			
 			//ragdoll
 			GetMesh()->SetAllBodiesSimulatePhysics(true);
 			GetMesh()->SetCollisionProfileName("Ragdoll");
@@ -127,5 +123,15 @@ void ASAICharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponen
 			//set lifespan
 			SetLifeSpan(10);
 		}
+	}
+}
+
+void ASAICharacter::MulticastPawnSeen_Implementation()
+{
+	ActivePawnSeen = CreateWidget<USWorldUserWidget>(GetWorld(), FoundPlayerWidgetClass);
+	if (ActivePawnSeen)
+	{
+		ActivePawnSeen->AttachedActor = this;
+		ActivePawnSeen->AddToViewport(10);
 	}
 }

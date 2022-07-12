@@ -17,8 +17,12 @@ public:
 	ASPickupActor();
 
 protected:
-	
+
+	UPROPERTY(ReplicatedUsing="OnRep_IsActive")
 	bool bIsActive;
+
+	UFUNCTION()
+	void OnRep_IsActive(); 
 
 	FTimerHandle ReActivateTimer;
 

@@ -118,9 +118,9 @@ bool USAttributeComponent::ApplyRageChange(AActor* InstigatorActor, float Delta)
 	Rage = FMath::Clamp(Rage + Delta, 0.0f, RageMax);
 
 	float ActualDelta = Rage - OldRage;
-	if (Delta != 0)
+	if (ActualDelta != 0)
 	{
-		OnRageChanged.Broadcast(InstigatorActor, this, Rage, ActualDelta);
+		MulticastRageChanged(InstigatorActor, Rage, ActualDelta);
 	}
 
 	return ActualDelta != 0;
@@ -135,6 +135,5 @@ void USAttributeComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 
 	DOREPLIFETIME(USAttributeComponent, Rage);
 	DOREPLIFETIME(USAttributeComponent, RageMax);
-
-	//DOREPLIFETIME_CONDITION(USAttributeComponent, HealthMax, COND_InitialOnly); 
+	
 }

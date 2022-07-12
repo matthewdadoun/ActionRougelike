@@ -9,7 +9,7 @@ void ASItemChest::Interact_Implementation(APawn* InstigatorPawn)
 {
 	bLidOpened = !bLidOpened;
 
-	OnRep_LidOpened(); 
+	OnRep_LidOpened();
 }
 
 void ASItemChest::OnRep_LidOpened()
@@ -40,4 +40,9 @@ void ASItemChest::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifet
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ASItemChest, bLidOpened);
+}
+
+void ASItemChest::OnActorLoaded_Implementation()
+{
+	OnRep_LidOpened();
 }

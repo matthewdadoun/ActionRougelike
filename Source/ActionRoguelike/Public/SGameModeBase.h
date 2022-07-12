@@ -12,25 +12,40 @@
  * 
  */
 
-class UCurveFloat; 
+class USSaveGame;
+class UCurveFloat;
 class UEnvQuery;
 class UEnvQueryInstanceBlueprintWrapper;
 UCLASS()
 class ACTIONROGUELIKE_API ASGameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
-	
-public:
 
+public:
 	ASGameModeBase();
+
 	virtual void StartPlay() override;
 
 	UFUNCTION(Exec)
 	void KillAll();
 
-	virtual void OnActorKilled(AActor* VictimActor, AActor* Killer); 
+	UFUNCTION(BlueprintCallable, Category = "SaveGame")
+	void WriteSaveGame();
+
+	void LoadSaveGame();
+
+	virtual void OnActorKilled(AActor* VictimActor, AActor* Killer);
+
+	void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
+
+	void HandleStartingNewPlayer_Implementation(APlayerController* NewPlayer) override;
 
 protected:
+	FString SlotName;
+
+	UPROPERTY()
+	USSaveGame* CurrentSaveGame;
+
 	FTimerHandle TimerHandle_SpawnBots;
 
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
@@ -44,7 +59,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Pickups")
 	UEnvQuery* PickupSpawnQuery;
-	
+
 	UPROPERTY(EditDefaultsOnly, Category = "AI")
 	UEnvQuery* SpawnBotQuery;
 
@@ -56,7 +71,7 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Pickups")
 	float RequiredPickupDistance;
-	
+
 	UPROPERTY(EditDefaultsOnly, Category = "Credits")
 	int32 CreditKillAmount;
 
@@ -67,9 +82,8 @@ protected:
 	void OnPickupSpawnQueryCompleted(UEnvQueryInstanceBlueprintWrapper* QueryInstance, EEnvQueryStatus::Type QueryStatus);
 
 	UFUNCTION()
-	void RespawnPlayerElapsed(AController* Controller); 
-	
+	void RespawnPlayerElapsed(AController* Controller);
+
 	UFUNCTION()
 	void SpawnBotTimerElapsed();
-
 };
