@@ -61,7 +61,9 @@ ASProjectileBase::ASProjectileBase()
 	MovementComp->bRotationFollowsVelocity = true;
 	MovementComp->bInitialVelocityInLocalSpace = true;
 
-	SetReplicates(true);
+	InitialLifeSpan = 15.0f;
+
+	bReplicates = true;
 }
 
 // Called when the game starts or when spawned

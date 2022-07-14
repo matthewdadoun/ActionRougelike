@@ -14,7 +14,6 @@ class ACTIONROGUELIKE_API USActionEffect : public USAction
 {
 	GENERATED_BODY()
 protected:
-
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Effect")
 	float Duration;
 
@@ -33,4 +32,7 @@ protected:
 public:
 	virtual void StartAction_Implementation(AActor* Instigator) override;
 	virtual void StopAction_Implementation(AActor* Instigator) override;
+
+	UFUNCTION(BlueprintCallable)
+	float GetTimeRemaining() const;
 };

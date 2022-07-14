@@ -31,6 +31,9 @@ class ACTIONROGUELIKE_API USAction : public UObject
 	GENERATED_BODY()
 
 protected:
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "UI")
+	TSoftObjectPtr<UTexture2D> Icon;
+
 	UPROPERTY(Replicated)
 	USActionComponent* ActionComp;
 
@@ -46,7 +49,10 @@ protected:
 	FGameplayTagContainer BlockedTags;
 
 	UPROPERTY(ReplicatedUsing="OnRep_RepData")
-	FActionRepData RepData; 
+	FActionRepData RepData;
+
+	UPROPERTY(Replicated)
+	float TimeStarted;
 
 	UFUNCTION()
 	void OnRep_RepData();

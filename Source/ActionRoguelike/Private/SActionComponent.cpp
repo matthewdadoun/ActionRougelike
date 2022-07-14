@@ -8,6 +8,8 @@
 #include "Engine/ActorChannel.h"
 #include "Net/UnrealNetwork.h"
 
+DECLARE_CYCLE_STAT(TEXT("StartActionByName"), STAT_StartActionByName, STATGROUP_MATTHEWDADOUN);
+
 // Sets default values for this component's properties
 USActionComponent::USActionComponent()
 {
@@ -28,6 +30,23 @@ void USActionComponent::BeginPlay()
 			AddAction(GetOwner(), ActionClass);
 		}
 	}
+}
+
+void USActionComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	TArray<USAction*> ActionsCopy = Actions;
+
+	//we make actions copy because we want to reference the specific action but don't want to remove an element of the array at runtime,
+	//since StopAction also removes the action from the array
+	for (USAction* Action : ActionsCopy)
+	{
+		if (Action && Action->IsRunning())
+		{
+			Action->StopAction(GetOwner());
+		}
+	}
+	
+	Super::EndPlay(EndPlayReason);
 }
 
 
@@ -95,7 +114,12 @@ bool USActionComponent::StartActionByName(AActor* Instigator, FName ActionName)
 			{
 				ServerStartAction(Instigator, ActionName);
 			}
+			{
+				//measures everything in StartActionByName
+				//SCOPE_CYCLE_COUNTER(STAT_StartActionByName);
+			}
 
+			TRACE_BOOKMARK(TEXT("StartAction::%s"), *GetNameSafe(Action));
 			Action->StartAction(Instigator);
 			return true;
 		}
@@ -117,7 +141,7 @@ bool USActionComponent::StopActionByName(AActor* Instigator, FName ActionName)
 				{
 					ServerStopAction(Instigator, ActionName);
 				}
-				
+
 				Action->StopAction(Instigator);
 				return true;
 			}
@@ -156,7 +180,7 @@ void USActionComponent::ServerStartAction_Implementation(AActor* Instigator, FNa
 
 void USActionComponent::ServerStopAction_Implementation(AActor* Instigator, FName ActionName)
 {
-	StopActionByName(Instigator, ActionName); 
+	StopActionByName(Instigator, ActionName);
 }
 
 

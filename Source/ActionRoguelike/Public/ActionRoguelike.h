@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 
+DECLARE_STATS_GROUP(TEXT("MATTHEWDADOUN_Game"), STATGROUP_MATTHEWDADOUN, STATCAT_Advanced);
+
 static void LogOnScreen(UObject* WorldContextObj, FString Msg, FColor Color = FColor::White, float Duration = 5.0f)
 {
 	if (!ensure(WorldContextObj))

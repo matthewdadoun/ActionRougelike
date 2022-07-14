@@ -5,22 +5,19 @@
 
 #include "SPlayerState.h"
 
-void ASCoin_Pickup::AddCredit(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+ASCoin_Pickup::ASCoin_Pickup()
 {
-	if (APawn* Pawn = Cast<APawn>(OtherActor))
+	
+}
+
+void ASCoin_Pickup::Interact_Implementation(APawn* InstigatorPawn)
+{
+	if (APawn* Pawn = Cast<APawn>(InstigatorPawn))
 	{
 		if (ASPlayerState* PS = Cast<ASPlayerState>(Pawn->GetPlayerState()))
 		{
 			PS->AddCredits(1);
-			HidePickup();
+			HideAndCooldownPickup();
 		}
 	}
-}
-
-ASCoin_Pickup::ASCoin_Pickup()
-{
-	CoinMeshComp = CreateDefaultSubobject<UStaticMeshComponent>("CoinMeshComp");
-	RootComponent = CoinMeshComp;
-
-	CoinMeshComp->OnComponentBeginOverlap.AddUniqueDynamic(this, &ThisClass::AddCredit);
 }

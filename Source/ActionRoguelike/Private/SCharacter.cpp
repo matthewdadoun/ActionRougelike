@@ -9,6 +9,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "SInteractionComponent.h"
+#include "SPlayerController.h"
 #include "Kismet/GameplayStatics.h"
 
 //called whenever the character is initialized
@@ -131,7 +132,7 @@ void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent*
 	}
 	if (NewHealth < 0.0f && Delta < 0.0f)
 	{
-		APlayerController* PC = Cast<APlayerController>(GetController());
+		ASPlayerController* PC = Cast<ASPlayerController>(GetController());
 		DisableInput(PC);
 
 		SetLifeSpan(5.0f);

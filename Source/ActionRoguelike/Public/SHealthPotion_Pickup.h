@@ -15,12 +15,20 @@ class ACTIONROGUELIKE_API ASHealthPotion_Pickup : public ASPickupActor
 	GENERATED_BODY()
 
 public:
-	UFUNCTION()
-	void RefillHealth(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	//UFUNCTION()
+	//void RefillHealth(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
 	ASHealthPotion_Pickup();
+
+	virtual void Interact_Implementation(APawn* InstigatorPawn) override;
+
+	virtual FText GetInteractText_Implementation(APawn* InstigatorPawn) override;
+
+	int32 CreditCost;
 protected:
 	
 	UPROPERTY(EditDefaultsOnly, Category = "Pickup")
-	UStaticMeshComponent* PotionBottleMeshComp; 
+	UStaticMeshComponent* PotionBottleMeshComp;
+
+	
 };

@@ -16,10 +16,8 @@ class ACTIONROGUELIKE_API ASAction_Pickup : public ASPickupActor
 	GENERATED_BODY()
 
 public:
-	
-	UFUNCTION()
-	void AddAction(class UPrimitiveComponent* OverlappedComp, class AActor* OtherActor, class UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	virtual void Interact_Implementation(APawn* InstigatorPawn) override;
 	ASAction_Pickup();
 
 protected:

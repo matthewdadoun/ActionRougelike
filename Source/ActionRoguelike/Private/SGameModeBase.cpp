@@ -3,12 +3,16 @@
 
 #include "SGameModeBase.h"
 
+#include "ActionRoguelike.h"
 #include "EngineUtils.h"
+#include "SActionComponent.h"
 #include "SPlayerState.h"
 #include "SAttributeComponent.h"
 #include "SCharacter.h"
+#include "SMonsterData.h"
 #include "SSaveGame.h"
 #include "AI/SAICharacter.h"
+#include "Engine/AssetManager.h"
 #include "EnvironmentQuery/EnvQueryManager.h"
 #include "GameFramework/GameStateBase.h"
 #include "Kismet/GameplayStatics.h"
@@ -80,7 +84,54 @@ void ASGameModeBase::OnBotSpawnQueryCompleted(UEnvQueryInstanceBlueprintWrapper*
 	TArray<FVector> Locations = QueryInstance->GetResultsAsLocations();
 	if (Locations.IsValidIndex(0))
 	{
-		GetWorld()->SpawnActor<AActor>(MinionClass, Locations[0], FRotator::ZeroRotator);
+		if (MonsterTable)
+		{
+			TArray<FMonsterInfoRow*> Rows;
+			MonsterTable->GetAllRows("", Rows);
+
+			int32 RandomIndex = FMath::RandRange(0, Rows.Num() - 1);
+			FMonsterInfoRow* SelectedRow = Rows[RandomIndex];
+
+			if (UAssetManager* Manager = UAssetManager::GetIfValid())
+			{
+				// load is successful!
+				LogOnScreen(this, "Loading Monster...", FColor::Green);
+
+				// specific areas of a class you wanna reference
+				TArray<FName> Bundles;
+
+				// function you wanna bind the delegate to upon loading
+				FStreamableDelegate Delegate = FStreamableDelegate::CreateUObject(this, &ThisClass::OnMonsterLoaded, SelectedRow->MonsterId, Locations[0]);
+
+				Manager->LoadPrimaryAsset(SelectedRow->MonsterId, Bundles, Delegate);
+			}
+		}
+	}
+}
+
+void ASGameModeBase::OnMonsterLoaded(FPrimaryAssetId LoadedId, FVector SpawnLocation)
+{
+	if (UAssetManager* Manager = UAssetManager::GetIfValid())
+	{
+		USMonsterData* MonsterData = Cast<USMonsterData>(Manager->GetPrimaryAssetObject(LoadedId));
+		// get the primary asset object using the asset manager from the ID
+		if (MonsterData)
+		{
+			AActor* NewBot = GetWorld()->SpawnActor<AActor>(MonsterData->MonsterClass, SpawnLocation, FRotator::ZeroRotator);
+			if (NewBot)
+			{
+				LogOnScreen(this, FString::Printf(TEXT("Spawned enemy: %s (%s)"), *GetNameSafe(NewBot), *GetNameSafe(MonsterData)));
+
+				if (USActionComponent* ActionComp = Cast<USActionComponent>(NewBot->GetComponentByClass(USActionComponent::StaticClass())))
+				{
+					for (TSubclassOf<USAction> ActionClass : MonsterData->Actions)
+					{
+						ActionComp->AddAction(NewBot, ActionClass);
+					}
+					LogOnScreen(this, "Finished loading monster", FColor::Green);
+				}
+			}
+		}
 	}
 }
 
@@ -201,6 +252,15 @@ void ASGameModeBase::OnActorKilled(AActor* VictimActor, AActor* Killer)
 void ASGameModeBase::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
+
+	// used to add options when loading from the main menu
+	FString SelectedSaveSlot = UGameplayStatics::ParseOption(Options, "SaveGame");
+
+	if (SelectedSaveSlot.Len() > 0)
+	{
+		// override slot name
+		SlotName = SelectedSaveSlot;
+	}
 
 	LoadSaveGame();
 }

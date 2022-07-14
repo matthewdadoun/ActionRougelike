@@ -5,16 +5,15 @@
 
 #include "SActionComponent.h"
 
-void ASAction_Pickup::AddAction(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void ASAction_Pickup::Interact_Implementation(APawn* InstigatorPawn)
 {
-	if (USActionComponent* ActionComponent = Cast<USActionComponent>(OtherActor->GetComponentByClass(USActionComponent::StaticClass())))
+	if (USActionComponent* ActionComponent = Cast<USActionComponent>(InstigatorPawn->GetComponentByClass(USActionComponent::StaticClass())))
 	{
 		if (!ActionComponent->GetAction(ActionToAdd))
 		{
-			ActionComponent->AddAction(OtherActor, ActionToAdd);
-			HidePickup();
+			ActionComponent->AddAction(InstigatorPawn, ActionToAdd);
+			HideAndCooldownPickup();
 		}
-
 		else
 		{
 			FString DebugMsg = FString::Printf(TEXT("Action '%s' already known."), *GetNameSafe(ActionToAdd));
@@ -25,8 +24,4 @@ void ASAction_Pickup::AddAction(UPrimitiveComponent* OverlappedComp, AActor* Oth
 
 ASAction_Pickup::ASAction_Pickup()
 {
-	ActionMeshComp = CreateDefaultSubobject<UStaticMeshComponent>("ActionMeshComp");
-	RootComponent = ActionMeshComp;
-
-	ActionMeshComp->OnComponentBeginOverlap.AddUniqueDynamic(this, &ThisClass::AddAction);
 }
