@@ -3,21 +3,46 @@
 
 #include "SMagicProjectile.h"
 
+#include "SActionComponent.h"
+#include "SGameplayFunctionLibrary.h"
+#include "Components/SphereComponent.h"
+#include "GameFramework/ProjectileMovementComponent.h"
+
 // Sets default values
 ASMagicProjectile::ASMagicProjectile()
 {
-
+	DamageAmount = 20.0f;
 }
 
-// Called when the game starts or when spawned
-void ASMagicProjectile::BeginPlay()
+void ASMagicProjectile::OnActorOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
+                                       const FHitResult& SweepResult)
 {
-	Super::BeginPlay();
+	if (OtherActor && OtherActor != GetInstigator())
+	{
+		//static FGameplayTag Tag = FGameplayTag::RequestGameplayTag("Status.Parrying");
+		if (USActionComponent* ActionComp = Cast<USActionComponent>(OtherActor->GetComponentByClass(USActionComponent::StaticClass())))
+		{
+			if (ActionComp->ActiveGameplayTags.HasTag(ParryTag))
+			{
+				MovementComp->Velocity = -MovementComp->Velocity;
+				SetInstigator(Cast<APawn>(OtherActor));
+				return;
+			}
+
+			if (USGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, DamageAmount, SweepResult))
+			{
+				if (ActionComp && HasAuthority())
+				{
+					ActionComp->AddAction(GetInstigator(), BurningClass);
+					Explode();
+				}
+			}
+		}
+	}
 }
 
-// Called every frame
-void ASMagicProjectile::Tick(float DeltaTime)
+void ASMagicProjectile::PostInitializeComponents()
 {
-	Super::Tick(DeltaTime);
+	Super::PostInitializeComponents();
+	SphereComp->OnComponentBeginOverlap.AddUniqueDynamic(this, &ThisClass::OnActorOverlap);
 }
-

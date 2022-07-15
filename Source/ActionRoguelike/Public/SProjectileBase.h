@@ -11,55 +11,49 @@ class UAudioComponent;
 class USoundCue;
 class USphereComponent;
 class UProjectileMovementComponent;
-class USActionEffect; 
+class USActionEffect;
 UCLASS(Blueprintable)
 class ACTIONROGUELIKE_API ASProjectileBase : public AActor
 {
 	GENERATED_BODY()
-	
+
 public:
-
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USphereComponent* SphereComp;
-	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UProjectileMovementComponent* MovementComp;
-	
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Components")
+	float ShootSpeed;
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UParticleSystemComponent* EffectComp;
-	
+
 	UPROPERTY(VisibleAnywhere, Category = "Components")
 	UAudioComponent* AudioComp;
 
 	UFUNCTION()
-	void OnActorOverlap(UPrimitiveComponent* PrimitiveComponent, AActor* Actor, UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult);
-	
+	void OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
 	// Sets default values for this actor's properties
 	ASProjectileBase();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	//virtual void BeginPlay() override;
 
+	virtual void PostInitializeComponents() override;
+
+protected:
+	/* Plays the effects upon being destroyed */
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent)
 	void Explode();
-
-	UPROPERTY(EditDefaultsOnly, Category = "Damage")
-	FGameplayTag ParryTag;
-	
-	UPROPERTY(EditDefaultsOnly, Category = "Damage")
-	float DamageAmount;
-
-	UPROPERTY(EditDefaultsOnly, Category = "Damage")
-	TSubclassOf<USActionEffect> BurningClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Effects|Shake")
 	UParticleSystem* ImpactVFX;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Effects|Shake")
 	USoundBase* ImpactSound;
-	
+
 	UPROPERTY(EditDefaultsOnly, Category = "Effects|Shake")
 	TSubclassOf<UCameraShakeBase> ImpactShake;
 
@@ -68,9 +62,4 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Effects|Shake")
 	float ImpactShakeOuterRadius;
-
-public:	
-	// Called every framew
-	virtual void Tick(float DeltaTime) override;
-
 };

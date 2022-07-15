@@ -3,8 +3,6 @@
 
 #include "SProjectileBase.h"
 
-#include "SActionComponent.h"
-#include "SGameplayFunctionLibrary.h"
 #include "Components/AudioComponent.h"
 
 #include "Components/SphereComponent.h"
@@ -12,30 +10,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
 
-void ASProjectileBase::OnActorOverlap(UPrimitiveComponent* PrimitiveComponent, AActor* OtherActor, UPrimitiveComponent* PrimitiveComponent1, int I, bool bArg, const FHitResult& HitResult)
+void ASProjectileBase::OnActorHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
-	if (OtherActor && OtherActor != GetInstigator())
-	{
-		//static FGameplayTag Tag = FGameplayTag::RequestGameplayTag("Status.Parrying");
-		if (USActionComponent* ActionComp = Cast<USActionComponent>(OtherActor->GetComponentByClass(USActionComponent::StaticClass())))
-		{
-			if (ActionComp->ActiveGameplayTags.HasTag(ParryTag))
-			{
-				MovementComp->Velocity = -MovementComp->Velocity;
-				SetInstigator(Cast<APawn>(OtherActor));
-				return;
-			}
-
-			if (USGameplayFunctionLibrary::ApplyDirectionalDamage(GetInstigator(), OtherActor, DamageAmount, HitResult))
-			{
-				if (ActionComp && HasAuthority())
-				{
-					ActionComp->AddAction(GetInstigator(), BurningClass);
-					Explode();
-				}
-			}
-		}
-	}
+	Explode();
 }
 
 // Sets default values
@@ -46,7 +23,7 @@ ASProjectileBase::ASProjectileBase()
 
 	SphereComp = CreateDefaultSubobject<USphereComponent>("SphereComp");
 	SphereComp->SetCollisionProfileName("Projectile");
-	SphereComp->OnComponentBeginOverlap.AddDynamic(this, &ASProjectileBase::OnActorOverlap);
+	SphereComp->OnComponentHit.AddUniqueDynamic(this, &ThisClass::OnActorHit);
 	RootComponent = SphereComp;
 
 	EffectComp = CreateDefaultSubobject<UParticleSystemComponent>("EffectComp");
@@ -57,7 +34,8 @@ ASProjectileBase::ASProjectileBase()
 
 	MovementComp = CreateDefaultSubobject<UProjectileMovementComponent>("MovementComp");
 	MovementComp->ProjectileGravityScale = 0.0f;
-	MovementComp->InitialSpeed = 1000.0f;
+	ShootSpeed = 5000.0f;
+
 	MovementComp->bRotationFollowsVelocity = true;
 	MovementComp->bInitialVelocityInLocalSpace = true;
 
@@ -66,10 +44,14 @@ ASProjectileBase::ASProjectileBase()
 	bReplicates = true;
 }
 
-// Called when the game starts or when spawned
-void ASProjectileBase::BeginPlay()
+//void ASProjectileBase::BeginPlay()
+//{
+//	Super::BeginPlay();
+//}
+
+void ASProjectileBase::PostInitializeComponents()
 {
-	Super::BeginPlay();
+	Super::PostInitializeComponents();
 }
 
 void ASProjectileBase::Explode_Implementation()
@@ -82,10 +64,4 @@ void ASProjectileBase::Explode_Implementation()
 
 		Destroy();
 	}
-}
-
-// Called every frame
-void ASProjectileBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 }

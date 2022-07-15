@@ -40,16 +40,9 @@ AActor* ASAICharacter::GetTargetActor() const
 {
 	if (AAIController* AIC = Cast<AAIController>(GetController()))
 	{
-		FName TargetActorKey;
 		return Cast<AActor>(AIC->GetBlackboardComponent()->GetValueAsObject("TargetActor"));
 	}
 	return nullptr;
-}
-
-// Called when the game starts or when spawned
-void ASAICharacter::BeginPlay()
-{
-	Super::BeginPlay();
 }
 
 void ASAICharacter::OnPawnSeen(APawn* Pawn)
@@ -71,12 +64,6 @@ void ASAICharacter::PostInitializeComponents()
 	Super::PostInitializeComponents();
 	PawnSensingComp->OnSeePawn.AddUniqueDynamic(this, &ThisClass::OnPawnSeen);
 	AttributeComponent->OnHealthChanged.AddUniqueDynamic(this, &ThisClass::OnHealthChanged);
-}
-
-// Called every frame
-void ASAICharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
 }
 
 // Called to bind functionality to input

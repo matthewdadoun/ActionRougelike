@@ -130,7 +130,7 @@ void ASCharacter::OnHealthChanged(AActor* InstigatorActor, USAttributeComponent*
 		GetMesh()->SetScalarParameterValueOnMaterials("HitFlashTime", GetWorld()->TimeSeconds);
 		AttributeComp->ApplyRageChange(this, FMath::Abs(Delta));
 	}
-	if (NewHealth < 0.0f && Delta < 0.0f)
+	if (NewHealth <= 0.0f && Delta < 0.0f)
 	{
 		ASPlayerController* PC = Cast<ASPlayerController>(GetController());
 		DisableInput(PC);

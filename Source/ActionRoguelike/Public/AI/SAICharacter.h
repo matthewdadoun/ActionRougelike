@@ -18,6 +18,7 @@ class ACTIONROGUELIKE_API ASAICharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
+	
 	// Sets default values for this character's properties
 	ASAICharacter();
 
@@ -49,8 +50,6 @@ protected:
 	void SetTargetActor(AActor* NewTarget);
 
 	AActor* GetTargetActor() const;
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
 	UFUNCTION()
 	void OnPawnSeen(APawn* Pawn);
@@ -58,8 +57,6 @@ protected:
 	virtual void PostInitializeComponents() override;
 
 public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
