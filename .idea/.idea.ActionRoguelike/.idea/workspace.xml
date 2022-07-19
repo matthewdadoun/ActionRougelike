@@ -10,19 +10,14 @@
   <component name="ChangeListManager">
     <list default="true" id="22e02bc9-5ef4-49a9-b546-40b1c432427a" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.ActionRoguelike/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.ActionRoguelike/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ActionRoguelike.uproject" beforeDir="false" afterPath="$PROJECT_DIR$/ActionRoguelike.uproject" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ActionRoguelike/BlackholeProjectileBP.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ActionRoguelike/BlackholeProjectileBP.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ActionRoguelike/BonfireBlueprint.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ActionRoguelike/BonfireBlueprint.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/ActionRoguelike/DashProjectileBP.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ActionRoguelike/DashProjectileBP.uasset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Content/ActionRoguelike/MagicProjectileBP.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ActionRoguelike/MagicProjectileBP.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ActionRoguelike/FindPickupSpawnSpots.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ActionRoguelike/FindPickupSpawnSpots.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ActionRoguelike/GameModeBaseBP.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ActionRoguelike/GameModeBaseBP.uasset" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Content/ActionRoguelike/Maps/TestLevel.umap" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ActionRoguelike/Maps/TestLevel.umap" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ActionRoguelike/Private/AI/SAICharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ActionRoguelike/Private/AI/SAICharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ActionRoguelike/Private/SCharacter.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ActionRoguelike/Private/SCharacter.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ActionRoguelike/Private/SItemChest.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ActionRoguelike/Private/SItemChest.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ActionRoguelike/Private/SMagicProjectile.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ActionRoguelike/Private/SMagicProjectile.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ActionRoguelike/Private/SProjectileBase.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ActionRoguelike/Private/SProjectileBase.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ActionRoguelike/Public/AI/SAICharacter.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ActionRoguelike/Public/AI/SAICharacter.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ActionRoguelike/Public/SMagicProjectile.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ActionRoguelike/Public/SMagicProjectile.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Source/ActionRoguelike/Public/SProjectileBase.h" beforeDir="false" afterPath="$PROJECT_DIR$/Source/ActionRoguelike/Public/SProjectileBase.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ActionRoguelike/PlayerCharacter.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ActionRoguelike/PlayerCharacter.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ActionRoguelike/Sprinting_BlendSpace1D.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ActionRoguelike/Sprinting_BlendSpace1D.uasset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Content/ActionRoguelike/UI/Crosshair_Widget.uasset" beforeDir="false" afterPath="$PROJECT_DIR$/Content/ActionRoguelike/UI/Crosshair_Widget.uasset" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -383,7 +378,9 @@
       <workItem from="1657665083731" duration="6712000" />
       <workItem from="1657730220005" duration="17760000" />
       <workItem from="1657817381956" duration="8984000" />
-      <workItem from="1657901788091" duration="2872000" />
+      <workItem from="1657901788091" duration="5420000" />
+      <workItem from="1657997987292" duration="3972000" />
+      <workItem from="1658247869449" duration="1708000" />
     </task>
     <servers />
   </component>
@@ -405,16 +402,5 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
-          <url>file://$PROJECT_DIR$/Source/ActionRoguelike/Private/SCharacter.cpp</url>
-          <line>135</line>
-          <option name="timeStamp" value="5" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>
